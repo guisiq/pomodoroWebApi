@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pomodoro.data;
 
@@ -11,9 +12,10 @@ using pomodoro.data;
 namespace pomodoro.Migrations
 {
     [DbContext(typeof(ApiContext))]
-    partial class ApiContextModelSnapshot : ModelSnapshot
+    [Migration("20220612200116_corigindoListas4")]
+    partial class corigindoListas4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace pomodoro.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("MetaUsuario", b =>
-                {
-                    b.Property<long>("MetasId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UsuariosUsuarioId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("MetasId", "UsuariosUsuarioId");
-
-                    b.HasIndex("UsuariosUsuarioId");
-
-                    b.ToTable("MetaUsuario");
-                });
 
             modelBuilder.Entity("pomodoro.data.Meta", b =>
                 {
@@ -120,6 +107,9 @@ namespace pomodoro.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("MetasId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -133,6 +123,8 @@ namespace pomodoro.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UsuarioId");
+
+                    b.HasIndex("MetasId");
 
                     b.ToTable("Usuarios");
                 });
@@ -164,21 +156,6 @@ namespace pomodoro.Migrations
                     b.HasDiscriminator().HasValue("TarefaRecursiva");
                 });
 
-            modelBuilder.Entity("MetaUsuario", b =>
-                {
-                    b.HasOne("pomodoro.data.Meta", null)
-                        .WithMany()
-                        .HasForeignKey("MetasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("pomodoro.data.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("UsuariosUsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("pomodoro.data.Pomodoro", b =>
                 {
                     b.HasOne("pomodoro.data.Tarefa", null)
@@ -197,9 +174,18 @@ namespace pomodoro.Migrations
                     b.Navigation("Meta");
                 });
 
+            modelBuilder.Entity("pomodoro.data.Usuario", b =>
+                {
+                    b.HasOne("pomodoro.data.Meta", null)
+                        .WithMany("Usuarios")
+                        .HasForeignKey("MetasId");
+                });
+
             modelBuilder.Entity("pomodoro.data.Meta", b =>
                 {
                     b.Navigation("Tarefas");
+
+                    b.Navigation("Usuarios");
                 });
 
             modelBuilder.Entity("pomodoro.data.Tarefa", b =>

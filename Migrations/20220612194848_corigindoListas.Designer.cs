@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pomodoro.data;
 
@@ -11,9 +12,10 @@ using pomodoro.data;
 namespace pomodoro.Migrations
 {
     [DbContext(typeof(ApiContext))]
-    partial class ApiContextModelSnapshot : ModelSnapshot
+    [Migration("20220612194848_corigindoListas")]
+    partial class corigindoListas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace pomodoro.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("MetaUsuario", b =>
-                {
-                    b.Property<long>("MetasId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UsuariosUsuarioId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("MetasId", "UsuariosUsuarioId");
-
-                    b.HasIndex("UsuariosUsuarioId");
-
-                    b.ToTable("MetaUsuario");
-                });
 
             modelBuilder.Entity("pomodoro.data.Meta", b =>
                 {
@@ -162,21 +149,6 @@ namespace pomodoro.Migrations
                         .HasColumnName("TarefaRecursiva_Inicio");
 
                     b.HasDiscriminator().HasValue("TarefaRecursiva");
-                });
-
-            modelBuilder.Entity("MetaUsuario", b =>
-                {
-                    b.HasOne("pomodoro.data.Meta", null)
-                        .WithMany()
-                        .HasForeignKey("MetasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("pomodoro.data.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("UsuariosUsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("pomodoro.data.Pomodoro", b =>

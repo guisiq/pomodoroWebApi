@@ -23,7 +23,7 @@ namespace pomodoro.data
         public string Login { get; set; }
         public string Senha { get; set; }
         public string Role { get; set; }
-        public List<Meta> Metas;
+        public ICollection<Meta>? Metas{ get; set; }
 
 
     }

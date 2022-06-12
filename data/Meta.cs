@@ -10,6 +10,7 @@ namespace pomodoro.data
         
         public long MetasId { get; set; }
 
-        public List<Tarefa>? Tarefas { get; set; }
+        public ICollection<Tarefa>? Tarefas { get; set; }
+        public ICollection<Usuario>? Usuarios { get; set; }
     }
 }
