@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace pomodoro.data
 {
@@ -21,6 +22,7 @@ namespace pomodoro.data
         public long UsuarioId { get; set; }
         public string Nome { get; set; }
         public string Login { get; set; }
+        [JsonIgnore]
         public string Senha { get; set; }
         public string Role { get; set; }
         public ICollection<Meta>? Metas{ get; set; }
