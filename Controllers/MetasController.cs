@@ -12,7 +12,6 @@ namespace pomodoro.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   
     public class MetasController : ControllerBase
     {
         private readonly ApiContext _context;
@@ -31,31 +30,42 @@ namespace pomodoro.Controllers
             {
                 return NotFound();
             }
-            var userLog = await _context?.Usuarios?.Where(x => x.Login == User.Identity.Name ).FirstAsync();
-            return  userLog.Metas.ToList();
+            //var userLog = await _context?.Usuarios?.Where(x => x.Login == User.Identity.Name ).FirstAsync();
+            //var userLog = await _context?.Usuarios?.Where(x => x.Login == User.Identity.Name )?.Select(x => new Usuario(x.Nome,x.Login,"",x.Role){Metas = x.Metas})?.FirstAsync();
+
+            //return  userLog.Metas.ToList();
+            return (await _context?.Usuarios?.Where(x => x.Login == User.Identity.Name).Select(x => x.Metas).FirstAsync()).ToList();
         }
 
         // GET: api/Metas/5
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<Meta>> GetMeta(long id)
+        public async Task<ActionResult<dynamic>> GetMeta(long id)
         {
-          if (_context.Metas == null)
-          {
-              return NotFound();
-          }
-
-            var meta = await _context.Metas.FindAsync(id);
-
+            if (_context?.Usuarios is null)
+            {
+                return NotFound();
+            }
+            var meta = _context?.Usuarios
+                                    ?.Where(x => x.Login == User.Identity.Name)
+                                    ?.Select(x => x.Metas)
+                                    ?.FirstOrDefault()
+                                    ?.Where(x => x.MetasId == id)
+                                    ?.Select(x => new
+                                    {
+                                        x.descricao,
+                                        x.MetasId,
+                                        tarefasIds = x?.Tarefas?.Select(x => x.TarefaId),
+                                        usuariosIds = x?.Usuarios?.Select(x => x.UsuarioId)
+                                    })
+                                    ?.FirstOrDefault();
             if (meta == null)
             {
                 return NotFound();
             }
-            var userLog = _context?.Usuarios?.Where(x => x.Login == User.Identity.Name ).FirstOrDefault();
-            if(userLog?.Metas.ToList().Exists(x => x.MetasId == meta.MetasId)??false){
+            else
+            {
                 return meta;
-            }else{
-                return Unauthorized();
             }
         }
 
@@ -74,11 +84,22 @@ namespace pomodoro.Controllers
 
             try
             {
-                var userLog = _context?.Usuarios?.Where(x => x.Login == User.Identity.Name ).FirstOrDefault();
-                if(userLog?.Metas.ToList().Exists(x => x.MetasId == meta.MetasId)??false){
+                var isEditavel = _context?.Usuarios
+                                            ?.Where(x => x.Login == User.Identity.Name)
+                                            ?.Select(x => x.Metas)
+                                            ?.First()
+                                            ?.Any(x => x.MetasId == meta.MetasId) ?? false;
+                if (isEditavel)
+                {
                     await _context.SaveChangesAsync();
-                }else{
+                }
+                else if (MetaExists(id))
+                {
                     return Unauthorized();
+                }
+                else
+                {
+                    return NotFound();
                 }
             }
             catch (DbUpdateConcurrencyException)
@@ -110,23 +131,22 @@ namespace pomodoro.Controllers
             {
                 return Problem("Entity set 'ApiContext.Metas'  is null.");
             }
-            if(User?.Identity is null){
+            if (User?.Identity is null)
+            {
                 return Unauthorized();
             }
-            var userLog = _context.Usuarios.Where(x => x.Login == User.Identity.Name ).FirstOrDefault();
-            if(userLog is null){
+            var userLog = _context.Usuarios.Where(x => x.Login == User.Identity.Name).FirstOrDefault();
+            if (userLog is null)
+            {
                 return Unauthorized();
             }
+            meta.Usuarios = new List<Usuario>() { userLog };
             _context.Metas.Add(meta);
-            if(userLog.Metas is null){
-                userLog.Metas = new List<Meta>();
-            }
-            userLog?.Metas.Add(meta);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMeta", new { id = meta.MetasId }, meta);
-                
-          
+
+
         }
 
         // DELETE: api/Metas/5
@@ -138,19 +158,23 @@ namespace pomodoro.Controllers
             {
                 return NotFound();
             }
-            var meta = await _context.Metas.FindAsync(id);
-            if (meta == null)
+            var isExcluivel = _context?.Usuarios
+                                        ?.Where(x => x.Login == User.Identity.Name)
+                                        ?.Select(x => x.Metas)
+                                        ?.First()
+                                        ?.Any(x => x.MetasId == id) ?? false;
+            if (isExcluivel)
+            {
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else if (MetaExists(id))
+            {
+                return Unauthorized();
+            }
+            else
             {
                 return NotFound();
-            }
-            var userLog = _context?.Usuarios?.Where(x => x.Login == User.Identity.Name ).FirstOrDefault();
-            if(userLog?.Metas.ToList().Exists(x => x.MetasId == meta.MetasId)??false){
-                _context.Metas.Remove(meta);
-                await _context.SaveChangesAsync();
-
-                return NoContent();
-            }else{
-                return Unauthorized();
             }
         }
 
