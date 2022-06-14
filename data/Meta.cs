@@ -9,7 +9,7 @@ namespace pomodoro.data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         
         public long MetasId { get; set; }
-        public string descricao { get; set; }
+        public string Descricao { get; set; }
 
         public ICollection<Tarefa>? Tarefas { get; set; }
         public ICollection<Usuario>? Usuarios { get; set; }
