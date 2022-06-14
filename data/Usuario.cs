@@ -25,7 +25,7 @@ namespace pomodoro.data
         [JsonIgnore]
         public string Senha { get; set; }
         public string Role { get; set; }
-        public virtual ICollection<Meta> Metas{ get; set; }
+        public virtual ICollection<Meta>? Metas{ get; set; }
 
 
     }

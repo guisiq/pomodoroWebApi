@@ -11,7 +11,7 @@ namespace pomodoro.data
         public long MetasId { get; set; }
         public string Descricao { get; set; }
 
-        public ICollection<Tarefa>? Tarefas { get; set; }
-        public ICollection<Usuario>? Usuarios { get; set; }
+        public virtual ICollection<Tarefa>? Tarefas { get; set; }
+        public virtual ICollection<Usuario>? Usuarios { get; set; }
     }
 }
