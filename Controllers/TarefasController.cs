@@ -44,7 +44,7 @@ namespace pomodoro.Controllers
             if (tarefasQuery is not null)
             {
                 tarefasQuery.ToString();
-                return tarefasQuery.ToList();
+                return await tarefasQuery.ToListAsync();
             }
             return NoContent();
         }
