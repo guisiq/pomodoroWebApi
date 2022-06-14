@@ -53,7 +53,7 @@ namespace pomodoro.Controllers
                                     ?.Where(x => x.MetasId == id)
                                     ?.Select(x => new
                                     {
-                                        x.descricao,
+                                        x.Descricao,
                                         x.MetasId,
                                         tarefasIds = x?.Tarefas?.Select(x => x.TarefaId),
                                         usuariosIds = x?.Usuarios?.Select(x => x.UsuarioId)
