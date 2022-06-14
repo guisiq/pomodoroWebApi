@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +25,7 @@ namespace pomodoro.Controllers
         // GET: api/Metas
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Meta>>> GetMetas()
+        public async Task<ActionResult<dynamic>> GetMetas()
         {
             if (_context.Metas == null)
             {
@@ -34,7 +35,19 @@ namespace pomodoro.Controllers
             //var userLog = await _context?.Usuarios?.Where(x => x.Login == User.Identity.Name )?.Select(x => new Usuario(x.Nome,x.Login,"",x.Role){Metas = x.Metas})?.FirstAsync();
 
             //return  userLog.Metas.ToList();
-            return (await _context?.Usuarios?.Where(x => x.Login == User.Identity.Name).Select(x => x.Metas).FirstAsync()).ToList();
+            return  _context.Usuarios
+                                ?.Where(x => x.Login == User.Identity.Name)
+                                ?.SelectMany(x => x.Metas)
+                                ?.Select(x => new
+                                {
+                                    x.MetasId,
+                                    x.Descricao,
+                                    x.Tarefas,
+                                    Usuarios = x.Usuarios.Select(x => new{ x.Nome , x.UsuarioId})
+                                })
+                                ?.ToList();
+             
+                               
         }
 
         // GET: api/Metas/5
