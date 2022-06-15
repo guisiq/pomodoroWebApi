@@ -40,7 +40,6 @@ namespace pomodoro.Controllers
                                 ?.SelectMany(x => x.Metas)
                                 ?.Select(x => new
                                 {
-                                    cod = x.MetasId +"-;-"+ x.Descricao,
                                     x.MetasId,
                                     x.Descricao,
                                     x.Tarefas,
