@@ -62,14 +62,14 @@ namespace pomodoro.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PomodoroId"), 1L, 1);
 
-                    b.Property<long>("Intervalo")
-                        .HasColumnType("bigint");
+                    b.Property<TimeSpan>("IntervaloProgramado")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("IntervaloReal")
+                        .HasColumnType("time");
 
                     b.Property<long?>("TarefaId")
                         .HasColumnType("bigint");
-
-                    b.Property<DateTime>("data")
-                        .HasColumnType("datetime2");
 
                     b.Property<short>("tipoPomodoro")
                         .HasColumnType("smallint");
@@ -90,6 +90,7 @@ namespace pomodoro.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TarefaId"), 1L, 1);
 
                     b.Property<string>("Descricao")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Discriminator")
@@ -147,8 +148,8 @@ namespace pomodoro.Migrations
                     b.Property<DateTime>("Inicio")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("intervaloMaximoDias")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("intervaloMaximo")
+                        .HasColumnType("time");
 
                     b.HasDiscriminator().HasValue("Rotina");
                 });

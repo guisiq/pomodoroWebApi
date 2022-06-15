@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace pomodoro.data
 {
@@ -9,8 +8,8 @@ namespace pomodoro.data
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long PomodoroId { get; set; }
-        
-        public long Intervalo { get; set;}
+        public TimeSpan IntervaloReal { get; set;}
+        public TimeSpan IntervaloProgramado { get; set;}
         public DateTime data { get; set; }
         public TipoPomodoro tipoPomodoro { get; set; }
     }
