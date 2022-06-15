@@ -12,7 +12,7 @@ namespace pomodoro.data
 
         // could not be mapped because it is of type 'TimeOnly', which is not a supported primitive type or a valid entity type.
         public DateTime Inicio{ get; set; }
-        public TimeSpan intervaloMaximo { get; set; }
+        public long intervaloMaximoDias { get; set; }
 
     }
 }

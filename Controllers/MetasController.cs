@@ -171,15 +171,16 @@ namespace pomodoro.Controllers
             {
                 return NotFound();
             }
-            var isExcluivel = _context?.Usuarios
+            var meta = _context?.Usuarios
                                         ?.Where(x => x.Login == User.Identity.Name)
-                                        ?.Select(x => x.Metas)
-                                        ?.First()
-                                        ?.Any(x => x.MetasId == id) ?? false;
-            if (isExcluivel)
+                                        ?.SelectMany(x => x.Metas)
+                                        ?.Where(x => x.MetasId == id)
+                                        ?.Single() ;
+            if (meta is not null)
             {
+                _context.Metas.Remove(meta);
                 await _context.SaveChangesAsync();
-                return Ok();
+                return NoContent();
             }
             else if (MetaExists(id))
             {

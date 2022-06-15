@@ -10,7 +10,7 @@ namespace pomodoro.data
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseSqlServer(@"Server=LAPTOP-IC7APJAJ\SQLEXPRESS;Initial Catalog=avaliacaoA2p2;Integrated Security=True");
+			optionsBuilder.UseSqlServer(@"Server=LAPTOP-IC7APJAJ\SQLEXPRESS;Initial Catalog=avaliacaoA2p22;Integrated Security=True");
 		}
         public DbSet<Usuario>? Usuarios { get; set; }
         public DbSet<Meta>? Metas { get; set; }

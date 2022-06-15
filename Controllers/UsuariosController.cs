@@ -88,7 +88,7 @@ namespace pomodoro.Controllers
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [AllowAnonymous]
+  
         public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
         {
           if (_context.Usuarios == null)
@@ -98,7 +98,7 @@ namespace pomodoro.Controllers
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUsuario", new { id = usuario.UsuarioId }, usuario);
+            return Ok(usuario);
         }
 
         // DELETE: api/Usuarios/5

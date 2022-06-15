@@ -175,11 +175,17 @@ namespace pomodoro.Controllers
                 return Problem("Entity set 'ApiContext.Tarefas'  is null.");
             }
 
-            var meta = _context.Metas.Where(x => x.MetasId == metaId && x.Usuarios.Any(x => x.Login == login)).First();
-            if (meta is null && (_context.Metas?.Any(e => e.MetasId == metaId)).GetValueOrDefault())
+            //var meta = _context?.Metas?.Where(x => x.MetasId == metaId && x.Usuarios.Any(x => x.Login == login) )?.First();
+            var usuarioQ =  _context?.Usuarios?.Where(x => x.Login == login && x.Metas.Any(x => x.MetasId == metaId));
+            var usuarioCount = usuarioQ.Count();
+            
+            if (usuarioCount == 0 && (_context.Metas?.Any(e => e.MetasId == metaId)).GetValueOrDefault())
             {
                 return Unauthorized();
+            }else if(usuarioCount == 0 ){
+                return NotFound();
             }
+            var meta = usuarioQ?.Select(x => x.Metas).First().Where(x => x.MetasId == metaId).Select(x => x).First(); 
             if (meta.Tarefas == null)
             {
                 meta.Tarefas = new List<Tarefa>();
