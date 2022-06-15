@@ -120,26 +120,24 @@ namespace pomodoro.Controllers
 
         // POST: api/Tarefas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{metaId}")]
+        [HttpPost("/base/{metaId}")]
+        [Authorize]
         public async Task<ActionResult<Tarefa>> PostTarefa(long metaId ,Tarefa tarefa)
         {
-            if (_context.Tarefas == null)
-            {
-                return Problem("Entity set 'ApiContext.Tarefas'  is null.");
-            }
-
-            var meta = _context.Metas.Where(x => x.MetasId == metaId && x.Usuarios.Any(x => x.Login == User.Identity.Name)).First();
-            if(meta is null &&(_context.Metas?.Any(e => e.MetasId == metaId)).GetValueOrDefault()){
-                return Unauthorized();
-            }
-            if(meta.Tarefas == null){
-                meta.Tarefas = new List<Tarefa>();
-            }
-            meta.Tarefas.Add(tarefa);
-            //_context.Tarefas.Add(tarefa);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTarefa", new { id = tarefa.TarefaId }, tarefa);
+           return await salve(metaId, tarefa,User.Identity.Name);
+        }
+        
+        [HttpPost("/recursiva/{metaId}")]
+        [Authorize]
+        public async Task<ActionResult<Tarefa>> PostTarefaRecursiva(long metaId ,TarefaRecursiva tarefa)
+        {
+           return await salve(metaId, tarefa,User.Identity.Name);
+        }
+        [HttpPost("/rotina/{metaId}")]
+        [Authorize]
+        public async Task<ActionResult<Tarefa>> PostRotina(long metaId ,Rotina tarefa)
+        {
+           return await salve(metaId, tarefa,User.Identity.Name);
         }
 
         // DELETE: api/Tarefas/5
@@ -170,7 +168,28 @@ namespace pomodoro.Controllers
 
             return NoContent();
         }
+        private async Task<ActionResult<Tarefa>> salve(long metaId ,Tarefa tarefa,string login)
+		{
+            if (_context.Tarefas == null)
+            {
+                return Problem("Entity set 'ApiContext.Tarefas'  is null.");
+            }
 
+            var meta = _context.Metas.Where(x => x.MetasId == metaId && x.Usuarios.Any(x => x.Login == login)).First();
+            if (meta is null && (_context.Metas?.Any(e => e.MetasId == metaId)).GetValueOrDefault())
+            {
+                return Unauthorized();
+            }
+            if (meta.Tarefas == null)
+            {
+                meta.Tarefas = new List<Tarefa>();
+            }
+            meta.Tarefas.Add(tarefa);
+            _context.Tarefas.Add(tarefa);
+            _context.SaveChanges();
+            
+            return CreatedAtAction("GetTarefa", new { id = tarefa.TarefaId }, tarefa);
+        }
         private bool TarefaExists(long id)
         {
             return (_context.Tarefas?.Any(e => e.TarefaId == id)).GetValueOrDefault();
