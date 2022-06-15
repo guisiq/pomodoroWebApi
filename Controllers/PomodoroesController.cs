@@ -76,14 +76,13 @@ namespace pomodoro.Controllers
             {
                 return BadRequest();
             }
-            var pomodoroDb = await _context?.Usuarios
+            var pomodoroDb = _context?.Usuarios
                     ?.Where(x => x.Login == User.Identity.Name)
                     ?.SelectMany(x => x.Metas)
                     ?.SelectMany(x => x.Tarefas)
                     ?.SelectMany(x => x.Pomodoros)
-                    ?.Where(x => x.PomodoroId == id)
-                    ?.FirstAsync();
-            if (pomodoroDb == null)
+                    ?.Any(x => x.PomodoroId == id);
+            if (pomodoroDb == false)
             {
                 if(PomodoroExists(id)){
                     return Unauthorized();
@@ -135,6 +134,9 @@ namespace pomodoro.Controllers
                 return NotFound();
             }
             _context.Pomodoros.Add(pomodoro);
+            if(tarefa.Pomodoros is null){
+                tarefa.Pomodoros = new List<Pomodoro>();
+            }
             tarefa.Pomodoros.Add(pomodoro);
             await _context.SaveChangesAsync();
 
